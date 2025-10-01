@@ -1,0 +1,3 @@
+Laniya Bendolph
+Computer Science
+Classes and Methods designed .............
