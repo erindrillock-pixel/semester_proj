@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ReadFile2 {
@@ -10,7 +11,13 @@ public class ReadFile2 {
                 Scanner myReader = new Scanner(myObj);
                 while (myReader.hasNextLine()) {
                     String data = myReader.nextLine();
-                    System.out.println(data);
+                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
+                    String[] words = result.split("\\s+");
+                    ArrayList<String> wordList = new ArrayList<>();
+                    for (String word : words) {
+                        wordList.add(word.toLowerCase());
+                    }
+                    System.out.println(wordList);
                 }
                 myReader.close();
             } catch (FileNotFoundException e) {
@@ -24,7 +31,13 @@ public class ReadFile2 {
                 Scanner myReader2 = new Scanner(myObj2);
                 while (myReader2.hasNextLine()) {
                     String data = myReader2.nextLine();
-                    System.out.println(data);
+                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
+                    String[] words = result.split("\\s+");
+                    ArrayList<String> wordList = new ArrayList<>();
+                    for (String word : words) {
+                        wordList.add(word.toLowerCase());
+                    }
+                    System.out.println(wordList);
                 }
                 myReader2.close();
             } catch (FileNotFoundException e) {
@@ -38,7 +51,13 @@ public class ReadFile2 {
                 Scanner myReader3 = new Scanner(myObj3);
                 while (myReader3.hasNextLine()) {
                     String data = myReader3.nextLine();
-                    System.out.println(data);
+                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
+                    String[] words = result.split("\\s+");
+                    ArrayList<String> wordList = new ArrayList<>();
+                    for (String word : words) {
+                        wordList.add(word.toLowerCase());
+                    }
+                    System.out.println(wordList);
                 }
                 myReader3.close();
             } catch (FileNotFoundException e) {
