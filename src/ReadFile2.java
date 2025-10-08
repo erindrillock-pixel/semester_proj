@@ -5,65 +5,34 @@ import java.util.Scanner;
 
 public class ReadFile2 {
     public static void main(String[] args) {
-        for (int i = 0; i < 1; i++) {
-            try {
-                File myObj = new File("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.1.txt");
-                Scanner myReader = new Scanner(myObj);
-                while (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
-                    String[] words = result.split("\\s+");
-                    ArrayList<String> wordList = new ArrayList<>();
-                    for (String word : words) {
+        // Call readFile() for each file
+        readFile("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.1.txt");
+        readFile("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.2.txt");
+        readFile("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.3.txt");
+    }
+
+    public static void readFile(String filePath) {
+        try {
+            File file = new File(filePath);
+            Scanner myReader = new Scanner(file);
+            System.out.println("Reading file: " + filePath);
+
+            while (myReader.hasNextLine()) {
+                String line = myReader.nextLine();
+                String noPunct = line.replaceAll("[^\\sa-zA-Z0-9]", "");
+                String[] words = noPunct.split("\\s+");
+                ArrayList<String> wordList = new ArrayList<>();
+                for (String word : words) {
+                    if (!word.isEmpty()) { // avoid adding empty strings
                         wordList.add(word.toLowerCase());
                     }
-                    System.out.println(wordList);
                 }
-                myReader.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
+                System.out.println(wordList);
             }
-        }
-        for (int k = 0; k < 1; k++) {
-            try {
-                File myObj2 = new File("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.2.txt");
-                Scanner myReader2 = new Scanner(myObj2);
-                while (myReader2.hasNextLine()) {
-                    String data = myReader2.nextLine();
-                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
-                    String[] words = result.split("\\s+");
-                    ArrayList<String> wordList = new ArrayList<>();
-                    for (String word : words) {
-                        wordList.add(word.toLowerCase());
-                    }
-                    System.out.println(wordList);
-                }
-                myReader2.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-        }
-        for (int j = 0; j < 1; j++) {
-            try {
-                File myObj3 = new File("/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/Weather/Weather Topic 3.3.txt");
-                Scanner myReader3 = new Scanner(myObj3);
-                while (myReader3.hasNextLine()) {
-                    String data = myReader3.nextLine();
-                    String result = data.replaceAll("[^\\sa-zA-Z0-9]", ""); // remove punctuation
-                    String[] words = result.split("\\s+");
-                    ArrayList<String> wordList = new ArrayList<>();
-                    for (String word : words) {
-                        wordList.add(word.toLowerCase());
-                    }
-                    System.out.println(wordList);
-                }
-                myReader3.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred while reading: " + filePath);
+            e.printStackTrace();
         }
     }
 }
