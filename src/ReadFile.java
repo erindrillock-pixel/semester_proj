@@ -14,10 +14,8 @@ public class ReadFile {
         String articlePath2 = "/Users/ErinDrillock/Programming/Project files/Article 2_ castle.txt";
         String articlePath3 = "/Users/ErinDrillock/Programming/Project files/Article 3_ roasted meat.txt";
 
-        // Load stop words
         Set<String> stopWords = loadStopWords(stopWordsPath);
 
-        // Process each article
         processArticle("Article 1", articlePath1, stopWords);
         processArticle("Article 2", articlePath2, stopWords);
         processArticle("Article 3", articlePath3, stopWords);
@@ -45,12 +43,9 @@ public class ReadFile {
         for (int i = 0; i < wordCounts.size() - 1; i++) {
             for (int j = 0; j < wordCounts.size() - i - 1; j++) {
                 if (wordCounts.get(j) < wordCounts.get(j + 1)) {
-                    // Swap counts
                     int tempCount = wordCounts.get(j);
                     wordCounts.set(j, wordCounts.get(j + 1));
                     wordCounts.set(j + 1, tempCount);
-
-                    // Swap corresponding words
                     String tempWord = uniqueWords.get(j);
                     uniqueWords.set(j, uniqueWords.get(j + 1));
                     uniqueWords.set(j + 1, tempWord);
@@ -95,7 +90,6 @@ public class ReadFile {
         try (Scanner reader = new Scanner(new File(filePath))) {
             while (reader.hasNextLine()) {
                 String line = reader.nextLine().toLowerCase();
-                // Remove punctuation and non-letter characters
                 line = line.replaceAll("[^a-z0-9\\s]", " ");
                 String[] parts = line.split("\\s+");
                 for (String word : parts) {
