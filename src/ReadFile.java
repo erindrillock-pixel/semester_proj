@@ -56,7 +56,7 @@ public class ReadFile {
         System.out.println("\n--- " + label + " ---");
         System.out.println("Total words in article: " + totalWords);
         System.out.println("Unique words: " + uniqueWords.size());
-        System.out.println("\nWords ranked by frequency:\n");
+        System.out.println("\nWords ranked by frequency:");
 
         for (int i = 0; i < uniqueWords.size(); i++) {
             System.out.println(uniqueWords.get(i) + ": " + wordCounts.get(i));
