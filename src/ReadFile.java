@@ -1,80 +1,31 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
-import java.util.Set;
 
 public class ReadFile {
 
+    static class FileStats {
+        int totalWords;
+        int uniqueWords;
+        String topWord;
+        int topCount;
+        ArrayList<String> rankedWords;
+        ArrayList<Integer> rankedCounts;
+    }
+
     public static void main(String[] args) {
         String stopWordsPath = "/Users/ErinDrillock/Programming/Project files/stopwords.txt";
-        String articlePath1 = "/Users/ErinDrillock/Programming/Project files/Article 1_ train.txt";
-        String articlePath2 = "/Users/ErinDrillock/Programming/Project files/Article 2_ castle.txt";
-        String articlePath3 = "/Users/ErinDrillock/Programming/Project files/Article 3_ roasted meat.txt";
+        ArrayList<String> stopWords = loadStopWords(stopWordsPath);
 
-        Set<String> stopWords = loadStopWords(stopWordsPath);
-
-        processArticle("Article 1", articlePath1, stopWords);
-        processArticle("Article 2", articlePath2, stopWords);
-        processArticle("Article 3", articlePath3, stopWords);
+        readFile("/Users/ErinDrillock/Programming/Project files/Article 1_ train.txt", stopWords);
+        readFile("/Users/ErinDrillock/Programming/Project files/Article 2_ castle.txt", stopWords);
+        readFile("/Users/ErinDrillock/Programming/Project files/Article 3_ roasted meat.txt", stopWords);
     }
 
-    public static void processArticle(String label, String filePath, Set<String> stopWords) {
-        ArrayList<String> words = loadWordsFromFile(filePath);
-        int totalWords = words.size();
-
-        removeStopWords(words, stopWords);
-
-        ArrayList<String> uniqueWords = new ArrayList<>();
-        ArrayList<Integer> wordCounts = new ArrayList<>();
-
-        for (String word : words) {
-            int index = uniqueWords.indexOf(word);
-            if (index != -1) {
-                wordCounts.set(index, wordCounts.get(index) + 1);
-            } else {
-                uniqueWords.add(word);
-                wordCounts.add(1);
-            }
-        }
-
-        for (int i = 0; i < wordCounts.size() - 1; i++) {
-            for (int j = 0; j < wordCounts.size() - i - 1; j++) {
-                if (wordCounts.get(j) < wordCounts.get(j + 1)) {
-                    int tempCount = wordCounts.get(j);
-                    wordCounts.set(j, wordCounts.get(j + 1));
-                    wordCounts.set(j + 1, tempCount);
-                    String tempWord = uniqueWords.get(j);
-                    uniqueWords.set(j, uniqueWords.get(j + 1));
-                    uniqueWords.set(j + 1, tempWord);
-                }
-            }
-        }
-
-        System.out.println("\n--- " + label + " ---");
-        System.out.println("Total words in article: " + totalWords);
-        System.out.println("Unique words: " + uniqueWords.size());
-        System.out.println("\nWords ranked by frequency:");
-
-        for (int i = 0; i < uniqueWords.size(); i++) {
-            System.out.println(uniqueWords.get(i) + ": " + wordCounts.get(i));
-        }
-    }
-
-    public static void removeStopWords(ArrayList<String> words, Set<String> stopWords) {
-        Iterator<String> iterator = words.iterator();
-        while (iterator.hasNext()) {
-            String word = iterator.next();
-            if (stopWords.contains(word)) {
-                iterator.remove();
-            }
-        }
-    }
-
-    public static Set<String> loadStopWords(String filePath) {
-        Set<String> stopWords = new HashSet<>();
+    public static ArrayList<String> loadStopWords(String filePath) {
+        ArrayList<String> stopWords = new ArrayList<>();
         try (Scanner reader = new Scanner(new File(filePath))) {
             while (reader.hasNext()) {
                 stopWords.add(reader.next().toLowerCase());
@@ -85,22 +36,90 @@ public class ReadFile {
         return stopWords;
     }
 
-    public static ArrayList<String> loadWordsFromFile(String filePath) {
+    public static void readFile(String filePath, ArrayList<String> stopWords) {
+        File file = new File(filePath);
+        try {
+            System.out.println("\nReading file: " + filePath);
+            FileStats stats = analyzeFile(file, stopWords);
+
+            System.out.println("--- " + file.getName() + " ---");
+            System.out.println("Total words: " + stats.totalWords);
+            System.out.println("Unique words: " + stats.uniqueWords);
+            System.out.println("Most frequent word: " + stats.topWord + " (" + stats.topCount + " times)");
+            System.out.println("\nWords ranked by frequency:\n");
+            for (int i = 0; i < stats.rankedWords.size(); i++) {
+                System.out.println(stats.rankedWords.get(i) + ": " + stats.rankedCounts.get(i));
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while reading: " + filePath);
+            e.printStackTrace();
+        }
+    }
+
+    public static FileStats analyzeFile(File file, ArrayList<String> stopWords) {
         ArrayList<String> words = new ArrayList<>();
-        try (Scanner reader = new Scanner(new File(filePath))) {
+
+        try (Scanner reader = new Scanner(file)) {
             while (reader.hasNextLine()) {
-                String line = reader.nextLine().toLowerCase();
-                line = line.replaceAll("[^a-z0-9\\s]", " ");
-                String[] parts = line.split("\\s+");
-                for (String word : parts) {
-                    if (!word.isEmpty()) {
-                        words.add(word);
+                String line = reader.nextLine();
+                String clean = line.replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
+                String[] parts = clean.split("\\s+");
+                for (String w : parts) {
+                    if (!w.isEmpty() && !stopWords.contains(w)) {
+                        words.add(w);
                     }
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Article file not found: " + filePath);
+            System.out.println("Error reading file: " + file.getName());
+            return null;
         }
-        return words;
+
+        int totalWords = words.size();
+        ArrayList<String> uniqueWords = new ArrayList<>();
+        ArrayList<Integer> counts = new ArrayList<>();
+
+        for (String w : words) {
+            int index = uniqueWords.indexOf(w);
+            if (index != -1) {
+                counts.set(index, counts.get(index) + 1);
+            } else {
+                uniqueWords.add(w);
+                counts.add(1);
+            }
+        }
+
+        // bubble sort by frequency
+        for (int i = 0; i < counts.size() - 1; i++) {
+            for (int j = 0; j < counts.size() - i - 1; j++) {
+                if (counts.get(j) < counts.get(j + 1)) {
+                    int tempCount = counts.get(j);
+                    counts.set(j, counts.get(j + 1));
+                    counts.set(j + 1, tempCount);
+
+                    String tempWord = uniqueWords.get(j);
+                    uniqueWords.set(j, uniqueWords.get(j + 1));
+                    uniqueWords.set(j + 1, tempWord);
+                }
+            }
+        }
+
+        String topWord = "";
+        int topCount = 0;
+        if (!uniqueWords.isEmpty()) {
+            topWord = uniqueWords.get(0);
+            topCount = counts.get(0);
+        }
+
+        FileStats stats = new FileStats();
+        stats.totalWords = totalWords;
+        stats.uniqueWords = uniqueWords.size();
+        stats.topWord = topWord;
+        stats.topCount = topCount;
+        stats.rankedWords = uniqueWords;
+        stats.rankedCounts = counts;
+
+        return stats;
     }
 }
