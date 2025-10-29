@@ -5,16 +5,6 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 public class ReadFile2 {
-
-    static class FileStats {
-        int totalWords;
-        int uniqueWords;
-        String topWord;
-        int topCount;
-        ArrayList<String> rankedWords;
-        ArrayList<Integer> rankedCounts;
-    }
-
     public static void main(String[] args) {
         String stopWordsPath = "/Users/katherinenemanick/Documents/2025 Fall Courses/CPSC PWL F25/stopwords.txt";
         ArrayList<String> stopWords = loadStopWords(stopWordsPath);

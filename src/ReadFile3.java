@@ -4,16 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ReadFile3 {
-
-    static class FileStats {
-        int totalWords;
-        int uniqueWords;
-        String topWord;
-        int topCount;
-        ArrayList<String> rankedWords;
-        ArrayList<Integer> rankedCounts;
-    }
-
     public static void main(String[] args) {
         String stopWordsPath = "C://Users//laniy//Downloads//CSPC 2231 Lab 2025/stopwords.txt";
         ArrayList<String> stopWords = loadStopWords(stopWordsPath);
