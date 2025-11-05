@@ -17,8 +17,19 @@ public class ReadFile {
         }
         return stopWords;
     }
+    public static ArrayList<String> loadWordList(String filePath) {
+        ArrayList<String> words = new ArrayList<>();
+        try (Scanner reader = new Scanner(new File(filePath))) {
+            while (reader.hasNext()) {
+                words.add(reader.next().toLowerCase());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Word list file not found: " + filePath);
+        }
+        return words;
+    }
 
-    public static void readFile(String filePath, ArrayList<String> stopWords) {
+    public static void readFile(String filePath, ArrayList<String> stopWords, ArrayList<String> posWords, ArrayList<String> negWords, ArrayList<String> words) {
         File file = new File(filePath);
         try {
             System.out.println("\nReading file: " + filePath);
@@ -32,6 +43,7 @@ public class ReadFile {
             for (int i = 0; i < stats.rankedWords.size(); i++) {
                 System.out.println(stats.rankedWords.get(i) + ": " + stats.rankedCounts.get(i));
             }
+            System.out.println("\nTop 10 repeated words:\n");
 
         } catch (Exception e) {
             System.out.println("An error occurred while reading: " + filePath);

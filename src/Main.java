@@ -3,9 +3,14 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         String stopWordsPath = "/Users/ErinDrillock/Programming/Project files/stopwords.txt";
+        String positivePath = "/Users/ErinDrillock/Programming/Project files/positive-words.txt";
+        String negativePath = "/Users/ErinDrillock/Programming/Project files/negative-words.txt";
         ArrayList<String> stopWords = ReadFile.loadStopWords(stopWordsPath);
+        ArrayList<String> posWords = ReadFile.loadWordList(positivePath);
+        ArrayList<String> negWords = ReadFile.loadWordList(negativePath);
 
         System.out.println("\nTopic 1: ");
+        ReadFile.readFile("", stopWords);
         ReadFile.readFile("/Users/ErinDrillock/Programming/Project files/Article 1_ train.txt", stopWords);
         ReadFile.readFile("/Users/ErinDrillock/Programming/Project files/Article 2_ castle.txt", stopWords);
         ReadFile.readFile("/Users/ErinDrillock/Programming/Project files/Article 3_ roasted meat.txt", stopWords);
