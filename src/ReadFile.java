@@ -1,25 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class ReadFile {
     public static void main(String[] args) {
-        String stopWordsPath = "/Users/ErinDrillock/Programming/Project files/stopwords.txt";
-        String posWordsPath = "/Users/ErinDrillock/Programming/Project files/positive-words.txt";
-        String negWordsPath = "/Users/ErinDrillock/Programming/Project files/negative-words.txt";
-        String lexiconScoresPath = "/Users/ErinDrillock/Programming/Project files/lexicon_scores.txt";
-        ArrayList<String> stopWords = loadStopWords(stopWordsPath);
-        ArrayList<String> positiveWords = loadPositiveWords(posWordsPath);
-        ArrayList<String> negativeWords = loadNegativeWords(negWordsPath);
-        ArrayList<String> lexiconScores = loadLexiconScores(lexiconScoresPath);
-
-        readFile("/Users/ErinDrillock/Programming/Project files/Article 1_ train.txt", stopWords);
-        readFile("/Users/ErinDrillock/Programming/Project files/Article 2_ castle.txt", stopWords);
-        readFile("/Users/ErinDrillock/Programming/Project files/Article 3_ roasted meat.txt", stopWords);
     }
-
     public static ArrayList<String> loadStopWords(String filePath) {
         ArrayList<String> stopWords = new ArrayList<>();
         try (Scanner reader = new Scanner(new File(filePath))) {
@@ -30,21 +16,6 @@ public class ReadFile {
             System.out.println("Stop words file not found: " + filePath);
         }
         return stopWords;
-    }
-
-    public static ArrayList<String> loadPositiveWords(String filePath) {
-        ArrayList<String> positiveWords = new ArrayList<>();
-        return positiveWords;
-    }
-
-    public static ArrayList<String> loadNegativeWords(String filePath) {
-        ArrayList<String> negativeWords = new ArrayList<>();
-        return negativeWords;
-    }
-
-    public static ArrayList<String> loadLexiconScores(String filePath) {
-        ArrayList<String> lexiconScores = new ArrayList<>();
-        return lexiconScores;
     }
 
     public static void readFile(String filePath, ArrayList<String> stopWords) {
