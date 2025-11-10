@@ -7,8 +7,6 @@ public class FileStats {
         int topCount;
         ArrayList<String> rankedWords;
         ArrayList<Integer> rankedCounts;
-        double richVocab;
-        int positiveWords;
-        int negativeWords;
-        String lexiConWords;
+        int posCount;
+        int negCount;
     }

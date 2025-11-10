@@ -1,79 +1,52 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ReadFile {
-    public static void main(String[] args) {
-    }
-    public static ArrayList<String> loadStopWords(String filePath) {
-        ArrayList<String> stopWords = new ArrayList<>();
-        try (Scanner reader = new Scanner(new File(filePath))) {
-            while (reader.hasNext()) {
-                stopWords.add(reader.next().toLowerCase());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Stop words file not found: " + filePath);
-        }
-        return stopWords;
-    }
     public static ArrayList<String> loadWordList(String filePath) {
         ArrayList<String> words = new ArrayList<>();
-        try (Scanner reader = new Scanner(new File(filePath))) {
-            while (reader.hasNext()) {
-                words.add(reader.next().toLowerCase());
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                for (String word : line.toLowerCase().split("\\s+")) {
+                    if (!word.isEmpty()) {
+                        words.add(word);
+                    }
+                }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Word list file not found: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filePath);
         }
         return words;
     }
 
-    public static void readFile(String filePath, ArrayList<String> stopWords, ArrayList<String> posWords, ArrayList<String> negWords, ArrayList<String> words) {
-        File file = new File(filePath);
-        try {
-            System.out.println("\nReading file: " + filePath);
-            FileStats stats = analyzeFile(file, stopWords);
-
-            System.out.println("--- " + file.getName() + " ---");
-            System.out.println("Total words: " + stats.totalWords);
-            System.out.println("Unique words: " + stats.uniqueWords);
-            System.out.println("Most frequent word: " + stats.topWord + " (" + stats.topCount + " times)");
-            System.out.println("\nWords ranked by frequency:\n");
-            for (int i = 0; i < stats.rankedWords.size(); i++) {
-                System.out.println(stats.rankedWords.get(i) + ": " + stats.rankedCounts.get(i));
-            }
-            System.out.println("\nTop 10 repeated words:\n");
-
-        } catch (Exception e) {
-            System.out.println("An error occurred while reading: " + filePath);
-            e.printStackTrace();
-        }
-    }
-
-    public static FileStats analyzeFile(File file, ArrayList<String> stopWords) {
+    public static FileStats readFile(String filePath, ArrayList<String> stopWords, ArrayList<String> posWords, ArrayList<String> negWords) {
+        FileStats stats = new FileStats();
         ArrayList<String> words = new ArrayList<>();
 
-        try (Scanner reader = new Scanner(file)) {
-            while (reader.hasNextLine()) {
-                String line = reader.nextLine();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
                 String clean = line.replaceAll("[^a-zA-Z0-9\\s]", "").toLowerCase();
                 String[] parts = clean.split("\\s+");
                 for (String w : parts) {
                     if (!w.isEmpty() && !stopWords.contains(w)) {
                         words.add(w);
+                        if (posWords.contains(w)) stats.posCount++;
+                        if (negWords.contains(w)) stats.negCount++;
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error reading file: " + file.getName());
-            return null;
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + filePath);
+            e.printStackTrace();
         }
 
-        int totalWords = words.size();
+        stats.totalWords = words.size();
+
         ArrayList<String> uniqueWords = new ArrayList<>();
         ArrayList<Integer> counts = new ArrayList<>();
-
         for (String w : words) {
             int index = uniqueWords.indexOf(w);
             if (index != -1) {
@@ -83,7 +56,6 @@ public class ReadFile {
                 counts.add(1);
             }
         }
-
         for (int i = 0; i < counts.size() - 1; i++) {
             for (int j = 0; j < counts.size() - i - 1; j++) {
                 if (counts.get(j) < counts.get(j + 1)) {
@@ -98,21 +70,40 @@ public class ReadFile {
             }
         }
 
-        String topWord = "";
-        int topCount = 0;
-        if (!uniqueWords.isEmpty()) {
-            topWord = uniqueWords.get(0);
-            topCount = counts.get(0);
-        }
-
-        FileStats stats = new FileStats();
-        stats.totalWords = totalWords;
         stats.uniqueWords = uniqueWords.size();
-        stats.topWord = topWord;
-        stats.topCount = topCount;
+        stats.topWord = uniqueWords.isEmpty() ? "" : uniqueWords.get(0);
+        stats.topCount = counts.isEmpty() ? 0 : counts.get(0);
         stats.rankedWords = uniqueWords;
         stats.rankedCounts = counts;
 
+        System.out.println("\n--- " + filePath.substring(filePath.lastIndexOf("//") + 1) + " ---");
+        System.out.println("Total words: " + stats.totalWords);
+        System.out.println("Unique words: " + stats.uniqueWords);
+        System.out.println("Most frequent word: " + stats.topWord + " (" + stats.topCount + " times)");
+        System.out.println("\nTop 10 repeated words:");
+        for (int i = 0; i < Math.min(10, stats.rankedWords.size()); i++) {
+            System.out.println(stats.rankedWords.get(i) + ": " + stats.rankedCounts.get(i));
+        }
+
         return stats;
+    }
+
+
+    public static void compareVocabulary(String name1, FileStats stats1, String name2, FileStats stats2) {
+        if (stats1.uniqueWords > stats2.uniqueWords) {
+            System.out.println(name1 + " has richer vocabulary than " + name2 + " (" + stats1.uniqueWords + " vs " + stats2.uniqueWords + ")");
+        } else if (stats2.uniqueWords > stats1.uniqueWords) {
+            System.out.println(name2 + " has richer vocabulary than " + name1 + " (" + stats2.uniqueWords + " vs " + stats1.uniqueWords + ")");
+        } else {
+            System.out.println(name1 + " and " + name2 + " have equal vocabulary richness (" + stats1.uniqueWords + ")");
+        }
+    }
+
+    public static void printSentiment(String fileName, FileStats stats) {
+        String sentiment = "Neutral";
+        if (stats.posCount > stats.negCount) sentiment = "Positive";
+        else if (stats.negCount > stats.posCount) sentiment = "Negative";
+
+        System.out.println(fileName + " sentiment: " + sentiment + " (Positive words: " + stats.posCount + ", Negative words: " + stats.negCount + ")");
     }
 }
