@@ -6,6 +6,8 @@ This project processes and analyzes text files by:
 - Vocabulary richness
 - The top 10 most repeated words in each article
 - The sentiment (positive, negative, or neutral) based on word frequencies
+- Allows the user to select a topic to print
+- Allows the user to add a new file to a certain topic
 
 - **ReadFile.java** — Processes multiple articles and ranks words by frequency.
 - **FileStats.java** - Initiates the variables.
