@@ -1,0 +1,4 @@
+The FileStats class has high cohesion because the class only has one job, to store statistics about the processed text. It also has low coupling because it doesn't depend on any of the other classes and only contains primitive types.
+ReadFile has a medium cohesion because it mixes multiple responsibilities in the class. It also has medium coupling because it relies on FileStats to run and output what is expected. 
+The Main class has medium cohesion because it also mixes multiple responsibilities in the class. It also has medium coupling because it relies on the other two classes to perform well. 
+To improve the code readability and maintainability, we could work on making more classes to do the work that may be too much for a certain class, so that it's not as low cohesion. 
